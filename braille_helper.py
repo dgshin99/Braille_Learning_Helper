@@ -10,7 +10,7 @@ import playsound
 # Record Audio
 
 
-def speak(text):
+def speak_first(text):
 
 
      tts = gTTS(text=text, lang='ko')
@@ -23,7 +23,7 @@ def speak(text):
 
 
      playsound.playsound(filename)
-speak("단어 말하기")
+speak_first("단어 말하기")
 
 
 r = sr.Recognizer()
