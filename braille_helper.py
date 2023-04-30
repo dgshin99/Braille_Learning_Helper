@@ -125,42 +125,131 @@ MATCH_H2B_JONG = {
     u'ㅆ': [[0,0,1,1,0,0]],
 }
 
-def letter(hangul_letter):
+def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하고, 점자 데이터로 변환
     """
     Convert a hangul letter to 6-dot braille
-    (alphabet, number, and some special chracter supported)
     :param str hangul: a hangul chracter to convert to braille
     :return: braille data (6-int list with the value 0 or 1)
     :rtype: list[str, list[int]]
     """
     result = []
-    hangul_decomposed = hgtk.text.decompose(hangul_letter[0])
-    hangul_decomposed = \
-        hangul_decomposed.replace(hgtk.text.DEFAULT_COMPOSE_CODE, '')
+    result1 = []
+    result2 = []
+    result3 = []
+
+    hangul_decomposed = hgtk.text.decompose(hangul_letter[0], compose_code='/')
+    #hangul_decomposed = \
+    #    hangul_decomposed.replace(hgtk.text.DEFAULT_COMPOSE_CODE, '')
     for i in range(len(hangul_decomposed)):
         hangul = hangul_decomposed[i]
         if i == 0 and hangul in MATCH_H2B_CHO:
-            result.append([hangul, MATCH_H2B_CHO[hangul]])
+            result1.append(MATCH_H2B_CHO[hangul])
+            if hangul == 'ㄲ' or hangul == 'ㄸ' or hangul == 'ㅃ' or hangul == 'ㅆ' or hangul == 'ㅉ':
+                for b in range(2):
+                    for c in range(6):
+                        print(result1[0][b][c])
+                
+            else:
+                for c in range(6):
+                    print(result1[0][0][c])
+            #result.append([hangul, MATCH_H2B_CHO[hangul]])
+            #for i in range(6):
+                #result1.append(MATCH_H2B_CHO[hangul])
+                #print(result1[0][0][i])
         if i == 1 and hangul in MATCH_H2B_JOONG:
-            result.append([hangul, MATCH_H2B_JOONG[hangul]])
+            #result.append([hangul, MATCH_H2B_JOONG[hangul]])
+            result2.append(MATCH_H2B_JOONG[hangul])
+            if hangul == 'ㅒ' and hangul == 'ㅙ' and hangul == 'ㅞ' and hangul != 'ㅟ':
+                for b in range(2):
+                    for c in range(6):
+                        print(result2[0][b][c])
+                
+            else:
+                for c in range(6):
+                    print(result2[0][0][c])
+            
         if i == 2 and hangul in MATCH_H2B_JONG:
-            result.append([hangul, MATCH_H2B_JONG[hangul]])
+            #result.append([hangul, MATCH_H2B_JONG[hangul]])
+            result3.append(MATCH_H2B_JONG[hangul])
+            if hangul == 'ㄲ' and hangul == 'ㄳ' and hangul == 'ㄵ' and hangul == 'ㄶ' and hangul == 'ㄺ' and hangul == 'ㄻ' and hangul == 'ㄼ' and hangul == 'ㄽ'and hangul == 'ㄾ' and hangul == 'ㄿ' and hangul == 'ㅀ' and hangul == 'ㅄ':
+                for b in range(2):
+                    for c in range(6):
+                        print(result3[0][b][c])
+                
+            else:
+                for c in range(6):
+                    print(result3[0][0][c])
+            
     if result == []:
         result.append([hangul, [[0,0,0,0,0,0]]])
-    return result
+    return #result
 
 
-def text(hangul_sentence):
-    """
-    Convert hangul sentence to list of 6-dot braille
-    :param str hangul: hangul text to convert to braille
-    :return: list of braille data (list of 6-int list with the value 0 or 1)
-    :rtype: list[str, list[str, list[int]]]
-    """
+def text(hangul_sentence): #한글단어(문장)를 글자별로 분류
     result = []
 
     for hangul_letter in hangul_sentence:
-        result.append([hangul_letter, letter(hangul_letter)])
+        #result.append([hangul_letter, letter(hangul_letter)])
+        result.append(letter(hangul_letter))
     return result
 
-print(text(r.recognize_google(audio,language='ko-KR')))
+motor_input=(text(r.recognize_google(audio,language='ko-KR')))
+
+
+'''
+try:
+    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+        for b in range(3):
+            for c in range(2):
+                for d in range(6):
+                    print(motor_input[a][b][c][d])
+except IndexError as e1:
+    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+        for b in range(2):
+            for b in range(2):
+                for c in range(6):
+                    print(motor_input[a][b][c][d])
+except IndexError as e2:
+    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+        for b in range(3):
+            for b in range(1):
+                for c in range(6):
+                    print(motor_input[a][b][c][d])
+except IndexError as e3:
+    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+        for b in range(2):
+            for b in range(1):
+                for c in range(6):
+                    print(motor_input[a][b][c][d])
+'''
+'''
+try:
+    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+        for b in range(3):
+            if b == motor_input[a][0]:
+            elif b == a[1]:
+            elif b == a[2]:
+            for c in range(2):
+                for d in range(6):
+                    print(motor_input[a][b][c][d])
+except IndexError as e1:
+    try:
+        for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+            for b in range(2):
+                for b in range(2):
+                    for c in range(6):
+                        print(motor_input[a][b][c][d])
+    except IndexError as e2:
+        try:
+            for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+                for b in range(3):
+                    for b in range(1):
+                        for c in range(6):
+                            print(motor_input[a][b][c][d])
+        except IndexError as e3:
+            for a in range(len(r.recognize_google(audio,language='ko-KR'))):
+                for b in range(2):
+                    for b in range(1):
+                        for c in range(6):
+                            print(motor_input[a][b][c][d])
+'''
