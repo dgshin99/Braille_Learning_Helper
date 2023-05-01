@@ -67,7 +67,7 @@ MATCH_H2B_CHO = {
     u'ㄸ': [[0,0,0,0,0,1], [0,1,0,1,0,0]],
     u'ㅃ': [[0,0,0,0,0,1], [0,0,0,1,1,0]],
     u'ㅆ': [[0,0,0,0,0,1], [0,0,0,0,0,1]],
-    u'ㅉ': [[0,0,0,0,0,1], [0,0,0,1,0,1]],
+    u'ㅉ': [[0,0,0,0,0,1], [0,0,0,1,0,1]]
 }
 
 MATCH_H2B_JOONG = {
@@ -159,7 +159,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
         if i == 1 and hangul in MATCH_H2B_JOONG:
             #result.append([hangul, MATCH_H2B_JOONG[hangul]])
             result2.append(MATCH_H2B_JOONG[hangul])
-            if hangul == 'ㅒ' and hangul == 'ㅙ' and hangul == 'ㅞ' and hangul != 'ㅟ':
+            if hangul == 'ㅒ' or hangul == 'ㅙ' or hangul == 'ㅞ' or hangul == 'ㅟ':
                 for b in range(2):
                     for c in range(6):
                         print(result2[0][b][c])
@@ -171,7 +171,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
         if i == 2 and hangul in MATCH_H2B_JONG:
             #result.append([hangul, MATCH_H2B_JONG[hangul]])
             result3.append(MATCH_H2B_JONG[hangul])
-            if hangul == 'ㄲ' and hangul == 'ㄳ' and hangul == 'ㄵ' and hangul == 'ㄶ' and hangul == 'ㄺ' and hangul == 'ㄻ' and hangul == 'ㄼ' and hangul == 'ㄽ'and hangul == 'ㄾ' and hangul == 'ㄿ' and hangul == 'ㅀ' and hangul == 'ㅄ':
+            if hangul == 'ㄲ' or hangul == 'ㄳ' or hangul == 'ㄵ' or hangul == 'ㄶ' or hangul == 'ㄺ' or hangul == 'ㄻ' or hangul == 'ㄼ' or hangul == 'ㄽ'or hangul == 'ㄾ' or hangul == 'ㄿ' or hangul == 'ㅀ' or hangul == 'ㅄ':
                 for b in range(2):
                     for c in range(6):
                         print(result3[0][b][c])
