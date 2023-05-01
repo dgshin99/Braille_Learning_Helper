@@ -144,14 +144,55 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
         hangul = hangul_decomposed[i]
         if i == 0 and hangul in MATCH_H2B_CHO:
             result1.append(MATCH_H2B_CHO[hangul])
-            if hangul == 'ㄲ' or hangul == 'ㄸ' or hangul == 'ㅃ' or hangul == 'ㅆ' or hangul == 'ㅉ':
-                for b in range(2):
-                    for c in range(6):
-                        print(result1[0][b][c])
+            if hangul == 'ㄲ' or hangul == 'ㄸ' or hangul == 'ㅃ' or hangul == 'ㅆ' or hangul == 'ㅉ': #초성이 된소리일 경우
                 
-            else:
-                for c in range(6):
-                    print(result1[0][0][c])
+                for i in range(6):
+                    if result1[0][0][i] == 0:
+                        kit.servo[i].angle = 0
+
+                    else:
+                        kit.servo[i].angle = 180
+                
+                sleep(2) #2초 대기 추가
+                    
+                for j in range(6):
+                    kit.servo[j].angle = 0
+                    
+                
+                sleep(1) #점자 초기화 후 1초 대기
+                    
+
+                for i in range(6):
+                    if result1[0][1][i] == 0:
+                        kit.servo[i].angle = 0
+
+                    else:
+                        kit.servo[i].angle = 180
+                
+                #2초 대기 추가
+                    
+                for j in range(6):
+                    kit.servo[j].angle = 0
+                    #복구 후
+                #tts로 초성이었습니다.
+                
+                
+            else: #초성이 된소리가 아닐 경우
+                for i in range(6):
+                    if result1[0][0][i] == 0:
+                        kit.servo[i].angle = 0
+
+                    else:
+                        kit.servo[i].angle = 180
+                
+                #2초 대기 추가
+                    
+                for j in range(6):
+                    kit.servo[j].angle = 0
+              
+                #초기화 후 초성이었습니다.(tts)
+     
+
             #result.append([hangul, MATCH_H2B_CHO[hangul]])
             #for i in range(6):
                 #result1.append(MATCH_H2B_CHO[hangul])
@@ -194,62 +235,3 @@ def text(hangul_sentence): #한글단어(문장)를 글자별로 분류
     return result
 
 motor_input=(text(r.recognize_google(audio,language='ko-KR')))
-
-
-'''
-try:
-    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-        for b in range(3):
-            for c in range(2):
-                for d in range(6):
-                    print(motor_input[a][b][c][d])
-except IndexError as e1:
-    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-        for b in range(2):
-            for b in range(2):
-                for c in range(6):
-                    print(motor_input[a][b][c][d])
-except IndexError as e2:
-    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-        for b in range(3):
-            for b in range(1):
-                for c in range(6):
-                    print(motor_input[a][b][c][d])
-except IndexError as e3:
-    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-        for b in range(2):
-            for b in range(1):
-                for c in range(6):
-                    print(motor_input[a][b][c][d])
-'''
-'''
-try:
-    for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-        for b in range(3):
-            if b == motor_input[a][0]:
-            elif b == a[1]:
-            elif b == a[2]:
-            for c in range(2):
-                for d in range(6):
-                    print(motor_input[a][b][c][d])
-except IndexError as e1:
-    try:
-        for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-            for b in range(2):
-                for b in range(2):
-                    for c in range(6):
-                        print(motor_input[a][b][c][d])
-    except IndexError as e2:
-        try:
-            for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-                for b in range(3):
-                    for b in range(1):
-                        for c in range(6):
-                            print(motor_input[a][b][c][d])
-        except IndexError as e3:
-            for a in range(len(r.recognize_google(audio,language='ko-KR'))):
-                for b in range(2):
-                    for b in range(1):
-                        for c in range(6):
-                            print(motor_input[a][b][c][d])
-'''
