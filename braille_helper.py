@@ -3,6 +3,24 @@ import speech_recognition as sr
 import os
 import time
 import pygame
+import Adafruit_PCA9685 #여기부터 새로 추가
+
+pwm = Adafruit_PCA9685.PCA9685()
+
+servo_min = 150
+servo_max = 600
+
+def set_servo_pulse(channel, pulse):
+    pulse_length = 1000000 # 1,000,000 us per sec
+    pulse_length //= 60 #60Hz
+    pulse_length //= 4096 #12 bits of resoultion
+    pulse *= 1000
+    pulse //= pulse_length
+    pwm.set_pwm(channel,0,pulse)
+
+pwm.set_pwm_freq(60) #
+
+
 
 def speak_first(text):
      tts = gTTS(text=text, lang='ko')
@@ -147,51 +165,49 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
             if hangul == 'ㄲ' or hangul == 'ㄸ' or hangul == 'ㅃ' or hangul == 'ㅆ' or hangul == 'ㅉ': #초성이 된소리일 경우
                 
                 for i in range(6):
-                    if result1[0][0][i] == 0:
-                        kit.servo[i].angle = 0
-
+                    if result1[0][0][i] == 0:  #result 숫자 값은 초중종성에 맞게 변경했음
+                        pwm.set_pwm(i,0,servo_min) # 기존 코드를 변경함. 맨 위에 얘 정의 있음
+    
                     else:
-                        kit.servo[i].angle = 180
+                        pwm.set_pwm(i,0,servo_max)
                 
-                sleep(2) #2초 대기 추가
+                time.sleep(2) #2초 대기 추가
                     
                 for j in range(6):
-                    kit.servo[j].angle = 0
+                    pwm.set_pwm(j,0,servo_min)
                     
                 
-                sleep(1) #점자 초기화 후 1초 대기
+                time.sleep(1) #점자 초기화 후 1초 대기
                     
 
                 for i in range(6):
                     if result1[0][1][i] == 0:
-                        kit.servo[i].angle = 0
+                        pwm.set_pwm(i,0,servo_min)
 
                     else:
-                        kit.servo[i].angle = 180
+                        pwm.set_pwm(i,0,servo_max)
                 
-                #2초 대기 추가
+                time.sleep(2) #2초 대기 추가
                     
                 for j in range(6):
-                    kit.servo[j].angle = 0
+                    pwm.set_pwm(j,0,servo_min)
                     #복구 후
-                #tts로 초성이었습니다.
                 
-                
+                speak("초성이었습니다") #tts로 초성이었습니다.
+
             else: #초성이 된소리가 아닐 경우
                 for i in range(6):
                     if result1[0][0][i] == 0:
-                        kit.servo[i].angle = 0
+                        pwm.set_pwm(i,0,servo_min)
 
                     else:
-                        kit.servo[i].angle = 180
+                        pwm.set_pwm(i,0,servo_max)
                 
-                #2초 대기 추가
+                time.sleep(2)#2초 대기 추가
                     
                 for j in range(6):
-                    kit.servo[j].angle = 0
-              
-                #초기화 후 초성이었습니다.(tts)
-     
+                    pwm.set_pwm(j,0,servo_min)                     
+                speak("초성이었습니다") #초기화 후 초성이었습니다.(tts)
 
             #result.append([hangul, MATCH_H2B_CHO[hangul]])
             #for i in range(6):
@@ -201,25 +217,104 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
             #result.append([hangul, MATCH_H2B_JOONG[hangul]])
             result2.append(MATCH_H2B_JOONG[hangul])
             if hangul == 'ㅒ' or hangul == 'ㅙ' or hangul == 'ㅞ' or hangul == 'ㅟ':
-                for b in range(2):
-                    for c in range(6):
-                        print(result2[0][b][c])
+                for i in range(6):
+                    if result2[0][0][i] == 0:
+                        pwm.set_pwm(i,0,servo_min)
+
+                    else:
+                        pwm.set_pwm(i,0,servo_max)
+                
+                time.sleep(2) #2초 대기 추가
+                    
+                for j in range(6):
+                    pwm.set_pwm(j,0,servo_min)
+                    
+                
+                time.sleep(1) #점자 초기화 후 1초 대기
+                    
+
+                for i in range(6):
+                    if result2[0][1][i] == 0:
+                        pwm.set_pwm(i,0,servo_min)
+
+                    else:
+                        pwm.set_pwm(i,0,servo_max)
+                
+                time.sleep(2)#2초 대기 추가
+                    
+                for j in range(6):
+                    pwm.set_pwm(j,0,servo_min)
+                    #복구 후
+                #tts로 초성이었습니다.
+                speak("중성이었습니다")
+            
                 
             else:
-                for c in range(6):
-                    print(result2[0][0][c])
-            
+                for i in range(6):
+                    if result2[0][0][i] == 0:
+                        pwm.set_pwm(i,0,servo_min)
+
+                    else:
+                        pwm.set_pwm(i,0,servo_max)
+                
+                time.sleep(2)#2초 대기 추가
+                    
+                for j in range(6):
+                    pwm.set_pwm(j,0,servo_min)
+              
+                #초기화 후 중성이었습니다.(tts)
+                speak("중성이었습니다")
+        
+
         if i == 2 and hangul in MATCH_H2B_JONG:
             #result.append([hangul, MATCH_H2B_JONG[hangul]])
             result3.append(MATCH_H2B_JONG[hangul])
             if hangul == 'ㄲ' or hangul == 'ㄳ' or hangul == 'ㄵ' or hangul == 'ㄶ' or hangul == 'ㄺ' or hangul == 'ㄻ' or hangul == 'ㄼ' or hangul == 'ㄽ'or hangul == 'ㄾ' or hangul == 'ㄿ' or hangul == 'ㅀ' or hangul == 'ㅄ':
-                for b in range(2):
-                    for c in range(6):
-                        print(result3[0][b][c])
+                for i in range(6):
+                    if result3[0][0][i] == 0:
+                        pwm.set_pwm(i,0,servo_min)
+
+                    else:
+                        pwm.set_pwm(i,0,servo_max)
                 
+                time.sleep(2) #2초 대기 추가
+                    
+                for j in range(6):
+                    pwm.set_pwm(j,0,servo_min)
+                    
+                
+                time.sleep(1) #점자 초기화 후 1초 대기
+                    
+
+                for i in range(6):
+                    if result3[0][1][i] == 0:
+                        pwm.set_pwm(i,0,servo_min)
+
+                    else:
+                        pwm.set_pwm(i,0,servo_max)
+                
+                time.sleep(2)#2초 대기 추가
+                    
+                for j in range(6):
+                    pwm.set_pwm(j,0,servo_min)
+                    #복구 후
+                
+                speak("종성이었습니다") #tts로 초성이었습니다.
             else:
-                for c in range(6):
-                    print(result3[0][0][c])
+                for i in range(6):
+                    if result3[0][0][i] == 0:
+                        pwm.set_pwm(i,0,servo_min)
+
+                    else:
+                        pwm.set_pwm(i,0,servo_max)
+                
+                time.sleep(2)#2초 대기 추가
+                    
+                for j in range(6):
+                    pwm.set_pwm(j,0,servo_min)
+              
+                #초기화 후 종성이었습니다.(tts)
+                speak("종성이었습니다")    
             
     if result == []:
         result.append([hangul, [[0,0,0,0,0,0]]])
@@ -234,4 +329,4 @@ def text(hangul_sentence): #한글단어(문장)를 글자별로 분류
         result.append(letter(hangul_letter))
     return result
 
-motor_input=(text(r.recognize_google(audio,language='ko-KR')))
+text(r.recognize_google(audio,language='ko-KR'))
