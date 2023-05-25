@@ -16,7 +16,7 @@ MATCH_H2B_CHO = {
     u'ㅁ': [[1,0,0,0,1,0]],
     u'ㅂ': [[0,0,0,1,1,0]],
     u'ㅅ': [[0,0,0,0,0,1]],
-    '''u'ㅇ': [[1,1,0,1,1,0]],'''
+    #u'ㅇ': [[1,1,0,1,1,0]],
     u'ㅈ': [[0,0,0,1,0,1]],
     u'ㅊ': [[0,0,0,0,1,1]],
     u'ㅋ': [[1,1,0,1,0,0]],
@@ -52,7 +52,7 @@ MATCH_H2B_JOONG = {
     u'ㅝ': [[1,1,1,1,0,0]],
     u'ㅞ': [[1,1,1,1,0,0], [1,1,1,0,1,0]],
     u'ㅟ': [[1,0,1,1,0,0], [1,1,1,0,1,0]],
-    u'ㅢ': [[0,1,0,1,1,1]],
+    u'ㅢ': [[0,1,0,1,1,1]]
 }
 
 MATCH_H2B_JONG = {
@@ -286,79 +286,78 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                           
                 #초기화 후 종성이었습니다.(tts)
                 speak("종성이었습니다")    
-    return
+
 
 
 def text(hangul_sentence): #한글단어(문장)를 글자별로 분류
 
     for hangul_letter in hangul_sentence:
         letter(hangul_letter)
+    return hangul_sentence
 
-    return
 
-while True:      
+while True:
+    if GPIO.input(start_pin) == GPIO.HIGH:
+        print("start")
+        # 맨 처음에 실행할 내용
+        speak("단어 말하기")
 
-    while True:
-        if GPIO.input(start_pin) == GPIO.HIGH:
-            print("start")
-            # 맨 처음에 실행할 내용
-            speak("단어 말하기")
+        while True:
+            # microphone에서 audio source를 생성합니다.
+            r = sr.Recognizer()
+            with sr.Microphone() as source:
+                audio = r.listen(source)
 
-            while True:
-                # microphone에서 audio source를 생성합니다.
-                r = sr.Recognizer()
-                with sr.Microphone() as source:
-                    audio = r.listen(source)
+            try:
+                # 음성을 텍스트로 변환합니다.
+                said = r.recognize_google(audio, language='ko-KR')
+                print("You said: " + said)
 
-                try:
-                    # 음성을 텍스트로 변환합니다.
-                    said = r.recognize_google(audio, language='ko-KR')
-                    print("You said: " + said)
+                # 말씀하신 단어 출력
+                speak("말씀하신 단어가 " + said + "이면 중앙 YES 버튼, 틀리면 우측 NO 버튼을 눌러주세요.")
 
-                    # 말씀하신 단어 출력
-                    speak("말씀하신 단어가 " + said + "이면 중앙 YES 버튼, 틀리면 우측 NO 버튼을 눌러주세요.")
-
-                    while True:
-                        # GPIO 핀 입력 확인
-                        if GPIO.input(yes_pin) == GPIO.HIGH:
-                            print("Yes 버튼이 눌렸습니다.")
-                            # Yes 버튼 동작에 대한 처리
-                            break  # 내부 루프 탈출
-
-                        if GPIO.input(no_pin) == GPIO.HIGH:
-                            print("No 버튼이 눌렸습니다.")
-                            # No 버튼 동작에 대한 처리
-                            break  # 내부 루프 탈출
-                    
+                while True:
+                    # GPIO 핀 입력 확인
                     if GPIO.input(yes_pin) == GPIO.HIGH:
-                        time.sleep(2)
-                        break
+                        print("Yes 버튼이 눌렸습니다.")
+                        # Yes 버튼 동작에 대한 처리
+                        break  # 내부 루프 탈출
 
                     if GPIO.input(no_pin) == GPIO.HIGH:
-                        # 선택하는 부분으로 돌아가기 위해 외부 루프 탈출
-                        speak("다시 말씀해 주세요")
-                        continue
+                        print("No 버튼이 눌렸습니다.")
+                        # No 버튼 동작에 대한 처리
+                        break  # 내부 루프 탈출
+                    
+                if GPIO.input(yes_pin) == GPIO.HIGH:
+                    time.sleep(2)
+                    break
+
+                if GPIO.input(no_pin) == GPIO.HIGH:
+                    # 선택하는 부분으로 돌아가기 위해 외부 루프 탈출
+                    speak("다시 말씀해 주세요")
+                    continue
 
                     # 선택한 단어에 대한 처리
                     # ...
 
-                except sr.UnknownValueError:
-                    speak("인식하지 못했습니다.다시 말씀해 주세요")
-                except sr.RequestError as e:
-                    print("인식하지 못했습니다.다시 말씀해 주세요".format(e))
+            except sr.UnknownValueError:
+                speak("인식하지 못했습니다.다시 말씀해 주세요")
+            except sr.RequestError as e:
+                print("인식하지 못했습니다.다시 말씀해 주세요".format(e))
 
             
             
 
-            text(r.recognize_google(audio,language='ko-KR'))
+        r_word=text(r.recognize_google(audio,language='ko-KR'))
 
-            speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
+        speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
             
-            if GPIO.input(yes_pin) == GPIO.HIGH:
-                while True:
-                    text(said)
-                    speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
-                    if GPIO.input(start_pin) == GPIO.HIGH:
-                        break
-                    else:
-                        continue
+        if GPIO.input(yes_pin) == GPIO.HIGH:
+            while True:
+                text(r_word)
+                speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
+                if GPIO.input(start_pin) == GPIO.HIGH:
+                    break
+                else:
+                    continue
+            
