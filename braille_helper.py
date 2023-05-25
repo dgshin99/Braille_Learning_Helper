@@ -352,12 +352,11 @@ while True:
 
         speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
             
-        if GPIO.input(yes_pin) == GPIO.HIGH:
-            while True:
-                text(r_word)
-                speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
-                if GPIO.input(start_pin) == GPIO.HIGH:
-                    break
-                else:
-                    continue
-            
+    if GPIO.input(yes_pin) == GPIO.HIGH:
+        while True:
+            text(r_word)
+            speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
+            if GPIO.input(yes_pin) == GPIO.HIGH:
+                continue
+            if GPIO.input(start_pin) == GPIO.HIGH:
+                break
