@@ -347,12 +347,18 @@ while True:
 
                 for hangul_letter in hangul_sentence:
                     letter(hangul_letter)
-                return r.recognize_google(audio,language='ko-KR')
+                return
 
             text(r.recognize_google(audio,language='ko-KR'))
 
             speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
             if GPIO.input(yes_pin) == GPIO.HIGH:
-                text(text())
+                while True:
+                    text(said)
+                    speak("다시 보고 싶으시면 중앙의 yes버튼, 새로운 단어를 보고 싶으시면 좌측의 start버튼을 눌러주세요")
+                    if GPIO.input(start_pin) == GPIO.HIGH:
+                        break
+                    else:
+                        continue
             else:
                 continue
