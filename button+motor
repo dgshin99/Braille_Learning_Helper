@@ -100,18 +100,12 @@ def speak(text):
 speak("시작을 말해주세요")
 
 # 사용할 GPIO 핀의 번호를 설정
-start_pin = 17
-yes_pin = 27
-no_pin = 22
 off_pin = 23
 
 GPIO.setwarnings(False) 
 GPIO.setmode(GPIO.BCM) #핀모드 설정
 
 # 버튼 핀의 입력설정 , 라즈베리파이 내부에 풀다운저항 설정(스위치 안눌렸을 때 off, 눌렸을 때 on) 
-GPIO.setup(start_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(yes_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(no_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(off_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def button_callback(channel):
@@ -362,7 +356,7 @@ while True:
         time.sleep(2)
         text(r_word)
         speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
-    if said1 == "종료":
+    if GPIO.input(off_pin) == GPIO.HIGH:
         print("off")
         GPIO.add_event_detect(off_pin, GPIO.RISING, callback=button_callback, bouncetime=300)
 
