@@ -97,7 +97,7 @@ def speak(text):
     while pygame.mixer.music.get_busy() == True:
         continue
 
-speak("좌측 Start 버튼을 누르면 시작합니다.")
+speak("시작을 말해주세요")
 
 # 사용할 GPIO 핀의 번호를 설정
 start_pin = 17
@@ -120,7 +120,7 @@ def button_callback(channel):
 pwm = Adafruit_PCA9685.PCA9685()
 
 servo_start = 170
-servo_end = 400
+servo_end =330
 
 pwm.set_pwm_freq(50)
 
@@ -145,13 +145,13 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5) #5초 대기 추가
+                time.sleep(5) #2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
                                 
                             
-                time.sleep(3) #점자 초기화 후 3초 대기
+                time.sleep(3) #점자 초기화 후 1초 대기
                                 
 
                 for i in range(6):
@@ -161,7 +161,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5) #5초 대기 추가
+                time.sleep(5) #2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
@@ -177,7 +177,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5)#5초 대기 추가
+                time.sleep(5)#2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)                     
@@ -193,13 +193,13 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5) #5초 대기 추가
+                time.sleep(5) #2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
                                 
                             
-                time.sleep(3) #점자 초기화 후 3초 대기
+                time.sleep(3) #점자 초기화 후 1초 대기
                                 
 
                 for i in range(6):
@@ -209,7 +209,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5)#5초 대기 추가
+                time.sleep(5)#2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
@@ -226,7 +226,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5)#5초 대기 추가
+                time.sleep(5)#2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
@@ -245,13 +245,13 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5) #5초 대기 추가
+                time.sleep(5) #2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
                                 
                             
-                time.sleep(3) #점자 초기화 후 3초 대기
+                time.sleep(3) #점자 초기화 후 1초 대기
                                 
 
                 for i in range(6):
@@ -261,7 +261,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5)#5초 대기 추가
+                time.sleep(5)#2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
@@ -276,7 +276,7 @@ def letter(hangul_letter): #한 글자를 초성,중성,종성으로 분류하�
                     else:
                         pwm.set_pwm(i,0,servo_end)
                             
-                time.sleep(5)#5초 대기 추가
+                time.sleep(5)#2초 대기 추가
                                 
                 for j in range(6):
                     pwm.set_pwm(j,0,servo_start)
@@ -294,7 +294,11 @@ def text(hangul_sentence): #한글단어(문장)를 글자별로 분류
 
 
 while True:
-    if GPIO.input(start_pin) == GPIO.HIGH:
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        audio = r.listen(source)
+    said1 = r.recognize_google(audio, language='ko-KR')
+    if said1 == "시작":
         print("start")
         # 맨 처음에 실행할 내용
         speak("단어 말하기")
@@ -311,25 +315,29 @@ while True:
                 print("You said: " + said)
 
                 # 말씀하신 단어 출력
-                speak("말씀하신 단어가 " + said + "이면 중앙 YES 버튼, 틀리면 우측 NO 버튼을 눌러주세요.")
+                speak("말씀하신 단어가 " + said + "이면 맞음, 틀리면 틀림을 말해주세요.")
 
                 while True:
                     # GPIO 핀 입력 확인
-                    if GPIO.input(yes_pin) == GPIO.HIGH:
-                        print("Yes 버튼이 눌렸습니다.")
+                    r = sr.Recognizer()
+                    with sr.Microphone() as source:
+                        audio = r.listen(source)
+                    said1 = r.recognize_google(audio, language='ko-KR')
+                    if said1 == "맞음":
+                        print(said1)
                         # Yes 버튼 동작에 대한 처리
                         break  # 내부 루프 탈출
 
-                    if GPIO.input(no_pin) == GPIO.HIGH:
-                        print("No 버튼이 눌렸습니다.")
+                    if said1 == "틀림":
+                        print(said1)
                         # No 버튼 동작에 대한 처리
                         break  # 내부 루프 탈출
                     
-                if GPIO.input(yes_pin) == GPIO.HIGH:
+                if said1 == "맞음":
                     time.sleep(2)
                     break
 
-                if GPIO.input(no_pin) == GPIO.HIGH:
+                if said1 == "틀림":
                     # 선택하는 부분으로 돌아가기 위해 외부 루프 탈출
                     speak("다시 말씀해 주세요")
                     continue
@@ -345,16 +353,16 @@ while True:
             
             
 
-        r_word=text(r.recognize_google(audio,language='ko-KR'))
+        r_word=text(said)
 
-        speak("다시 읽고 싶으시면 중앙의 yes버튼, 새로운 단어를 읽고 싶으시면 좌측의 start버튼, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
+        speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
             
-    if GPIO.input(yes_pin) == GPIO.HIGH:
-        print("yes")
+    if said1 == "다시":
+        print("다시")
         time.sleep(2)
         text(r_word)
-        speak("다시 읽고 싶으시면 중앙의 yes버튼, 새로운 단어를 읽고 싶으시면 좌측의 start버튼, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
-    if GPIO.input(off_pin) == GPIO.HIGH:
+        speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
+    if said1 == "종료":
         print("off")
         GPIO.add_event_detect(off_pin, GPIO.RISING, callback=button_callback, bouncetime=300)
 
