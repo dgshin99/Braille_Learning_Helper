@@ -291,72 +291,95 @@ while True:
     r = sr.Recognizer()
     with sr.Microphone() as source:
         audio = r.listen(source)
-    said1 = r.recognize_google(audio, language='ko-KR')
-    if said1 == "시작":
-        print("start")
-        # 맨 처음에 실행할 내용
-        speak("단어 말하기")
+    try:
+        said1 = r.recognize_google(audio, language='ko-KR')
+        if said1 == "시작":
+            print("start")
+            # 맨 처음에 실행할 내용
+            speak("단어 말하기")
 
-        while True:
-            # microphone에서 audio source를 생성합니다.
-            r = sr.Recognizer()
-            with sr.Microphone() as source:
-                audio = r.listen(source)
+            while True:
+                # microphone에서 audio source를 생성합니다.
+                r = sr.Recognizer()
+                with sr.Microphone() as source:
+                    audio = r.listen(source)
 
-            try:
-                # 음성을 텍스트로 변환합니다.
-                said = r.recognize_google(audio, language='ko-KR')
-                print("You said: " + said)
+                try:
+                    # 음성을 텍스트로 변환합니다.
+                    said = r.recognize_google(audio, language='ko-KR')
+                    print("You said: " + said)
 
-                # 말씀하신 단어 출력
-                speak("말씀하신 단어가 " + said + "이면 맞음, 틀리면 틀림을 말해주세요.")
+                    # 말씀하신 단어 출력
+                    speak("말씀하신 단어가 " + said + "이면 맞아, 틀리면 틀려를 말해주세요.")
 
-                while True:
-                    # GPIO 핀 입력 확인
-                    r = sr.Recognizer()
-                    with sr.Microphone() as source:
-                        audio = r.listen(source)
+                    while True:
+                        # GPIO 핀 입력 확인
+                        r = sr.Recognizer()
+                        with sr.Microphone() as source:
+                            audio = r.listen(source)
+                        said1 = r.recognize_google(audio, language='ko-KR')
+                        if said1 == "맞아":
+                            print(said1)
+                            # Yes 버튼 동작에 대한 처리
+                            break  # 내부 루프 탈출
+
+                        if said1 == "틀려":
+                            print(said1)
+                            # No 버튼 동작에 대한 처리
+                            break  # 내부 루프 탈출
+                        
+                    if said1 == "맞아":
+                        time.sleep(2)
+                        break
+
+                    if said1 == "틀려":
+                        # 선택하는 부분으로 돌아가기 위해 외부 루프 탈출
+                        speak("다시 말씀해 주세요")
+                        continue
+
+                        # 선택한 단어에 대한 처리
+                        # ...
+
+                except sr.UnknownValueError:
+                    speak("인식하지 못했습니다.다시 말씀해 주세요")
+                except sr.RequestError as e:
+                    print("인식하지 못했습니다.다시 말씀해 주세요".format(e))
+
+                
+                
+
+            r_word=text(said)
+
+            speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
+            while True:
+                r = sr.Recognizer()
+                with sr.Microphone() as source:
+                    audio = r.listen(source)
+                try:
                     said1 = r.recognize_google(audio, language='ko-KR')
-                    if said1 == "맞음":
-                        print(said1)
-                        # Yes 버튼 동작에 대한 처리
-                        break  # 내부 루프 탈출
-
-                    if said1 == "틀림":
-                        print(said1)
-                        # No 버튼 동작에 대한 처리
-                        break  # 내부 루프 탈출
+                    print("You said: " + said1)
                     
-                if said1 == "맞음":
-                    time.sleep(2)
-                    break
-
-                if said1 == "틀림":
-                    # 선택하는 부분으로 돌아가기 위해 외부 루프 탈출
-                    speak("다시 말씀해 주세요")
-                    continue
-
-                    # 선택한 단어에 대한 처리
-                    # ...
-
-            except sr.UnknownValueError:
-                speak("인식하지 못했습니다.다시 말씀해 주세요")
-            except sr.RequestError as e:
-                print("인식하지 못했습니다.다시 말씀해 주세요".format(e))
-
-            
-            
-
-        r_word=text(said)
-
-        speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
-            
-    if said1 == "다시":
-        print("다시")
-        time.sleep(2)
-        text(r_word)
-        speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
-    if GPIO.input(off_pin) == GPIO.HIGH:
-        print("off")
-        GPIO.add_event_detect(off_pin, GPIO.RISING, callback=button_callback, bouncetime=300)
-
+                    #while True:
+                    if said1 == "다시":
+                        print("다시")
+                        time.sleep(2)
+                        text(r_word)
+                        speak("다시 읽고 싶으시면 다시를, 새로운 단어는 시작을, 종료를 원하시면 중앙 위의 off버튼을 3초간 눌러주세요")
+                        #break
+                    if said1 == "시작":
+                        break
+                   # if said1 == "다시":
+                   #     continue
+                   # if said1 == "시작":
+                   #     break
+                except sr.UnknownValueError:
+                    print("인식하지 못했습니다.다시 말씀해 주세요")
+                except sr.RequestError as e:
+                    print("인식하지 못했습니다.다시 말씀해 주세요".format(e))
+                if GPIO.input(off_pin) == GPIO.HIGH:
+                    print("off")
+                    GPIO.add_event_detect(off_pin, GPIO.RISING, callback=button_callback, bouncetime=300)
+    except sr.UnknownValueError:
+        speak("인식하지 못했습니다.다시 말씀해 주세요")
+    except sr.RequestError as e:
+        print("인식하지 못했습니다.다시 말씀해 주세요".format(e))
